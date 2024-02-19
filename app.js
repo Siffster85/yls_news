@@ -1,14 +1,16 @@
 const express = require('express')
 const app = express()
-//Will need to pull in error handler here
+const { handlePSQLErrors, handleCustomErrors } = require('./Errors/index')
 
-const { getTopics, getEndpoints } = require('./Controller/topics.controller')
+const { getTopics, getEndpoints, getArticle } = require('./Controller/topics.controller')
 
 //app.use(express.json()) will go here
 
 app.get('/api/topics', getTopics)
 
 app.get('/api', getEndpoints)
+
+app.get('/api/articles/:article_id', getArticle)
 
 
 
@@ -19,6 +21,8 @@ app.all ('/*', (req, res) => {
     })
 
 
-//app.use errors will go here
+    app.use(handlePSQLErrors)
+
+    app.use(handleCustomErrors)
 
     module.exports = app
