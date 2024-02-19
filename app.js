@@ -2,11 +2,13 @@ const express = require('express')
 const app = express()
 //Will need to pull in error handler here
 
-const { getTopics } = require('./Controller/topics.controller')
+const { getTopics, getEndpoints } = require('./Controller/topics.controller')
 
 //app.use(express.json()) will go here
 
 app.get('/api/topics', getTopics)
+
+app.get('/api', getEndpoints)
 
 
 
