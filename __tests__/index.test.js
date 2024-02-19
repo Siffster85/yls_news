@@ -20,10 +20,8 @@ describe('catchAllError', () => {
     })
 });
 
-
-
 describe('GET /api', () => {
-    test('should return the full JSON when the endpoint is called', () => {
+    test('GET 200 return the full JSON when the endpoint is called', () => {
         return request(app)
         .get('/api')
         .expect(200)
@@ -47,7 +45,56 @@ describe('GET /api/topics', () => {
         .get('/api/topics')
         .expect(200)
         .then(({ body: {topics}}) =>{
-            expect(Object.keys(topics[0])).toEqual([ 'slug', 'description' ])}
-        )
+            expect(topics.length).toBe(3)
+            topics.forEach((topic) =>{
+            expect(Object.keys(topic)).toEqual([ 'slug', 'description' ])
+            })
+    })
     });
+});
+
+describe('GET /api/articles/:article_id', () => {
+    test('GET 200, return an article object with the correct properties', () => {
+        return request(app)
+        .get('/api/articles/4')
+        .expect(200)
+        .then(({body}) => {
+            expect(Object.keys(body)).toEqual([ 'article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url' ])
+        })
+    });
+    test('GET 200, return the full article with all elements', () => {
+        return request(app)
+        .get('/api/articles/4')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual({
+                article_id: 4,
+                title: 'Student SUES Mitch!',
+                topic: 'mitch',
+                author: 'rogersop',
+                body: 'We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages',
+                created_at: '2020-05-06T01:14:00.000Z',
+                votes: 0,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+              })
+        })
+        
+    });
+    test('GET 400, if the request is not a number, should return a bad request', () => {
+        return request(app)
+        .get('/api/articles/for')
+        .expect(400)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Bad Request!')
+        })
+        
+    });
+    test('GET 404, if the article ID number does not exist', () => {
+        return request(app)
+        .get('/api/articles/1234567')
+        .expect(404)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Article not found.')
+    });
+    })
 });
