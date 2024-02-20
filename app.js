@@ -6,6 +6,8 @@ const { getTopics, getEndpoints } = require('./Controller/topics.controller')
 
 const { getArticle, getAllArticles } = require('./Controller/articles.controller')
 
+const { getArticleComments } = require('./Controller/comments.controller')
+
 //app.use(express.json()) will go here
 
 app.get('/api/topics', getTopics)
@@ -15,6 +17,8 @@ app.get('/api', getEndpoints)
 app.get('/api/articles/:article_id', getArticle)
 
 app.get('/api/articles', getAllArticles)
+
+app.get('/api/articles/:article_id/comments', getArticleComments)
 
 
 

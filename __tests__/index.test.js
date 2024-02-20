@@ -79,7 +79,6 @@ describe('GET /api/articles/:article_id', () => {
         .then(({body: {msg}}) => {
             expect(msg).toBe('Bad Request!')
         })
-        
     });
     test('GET 404, if the article ID number does not exist', () => {
         return request(app)
@@ -118,12 +117,57 @@ describe('GET /api/articles', () => {
             expect(body).toBeSortedBy('created_at', {descending : true})
         })
     });
-    test('GET 404, if an incorrect endpoint is requested, return a 404', () => {
+});
+
+describe('GET /api/articles/:article_id/comments', () => {
+    test('GET 200, should return all the comments from an article.', () => {        
         return request(app)
-        .get('/api/articlessss')
+        .get('/api/articles/5/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.length).toBe(2)
+        })
+    });
+    test('GET 200, Should return with the 6 request properties', () => {
+        return request(app)
+        .get('/api/articles/5/comments')
+        .expect(200)
+        .then(({body}) => {
+            body.forEach((comment) => {
+                expect(Object.keys(comment)).toEqual(['comment_id', 'body', 'article_id', 'author','votes', 'created_at' ])
+            })
+        })
+    });
+    test('GET 200, should be in most recent first order based on the created at column ', () => {
+        return request(app)
+        .get('/api/articles/5/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeSortedBy('created_at', {descending : true})
+        })
+    });
+    test('GET 200, should return an invitation to comment when there are no comments', () => {
+        return request(app)
+        .get('/api/articles/7/comments')
+        .expect(200)
+        .then((msg) => {
+            expect(msg.text).toBe('No comments yet. Be the first to comment!')
+        })
+    });
+    test('GET 400, if the request is not a number, should return a bad request', () => {
+        return request(app)
+        .get('/api/articles/for/comments')
+        .expect(400)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Bad Request!')
+        })
+    });
+    test('GET 404, if the article ID number does not exist', () => {
+        return request(app)
+        .get('/api/articles/1234567/comments')
         .expect(404)
         .then(({body: {msg}}) => {
-            expect(msg).toBe('Path not found')
+            expect(msg).toBe('Article not found.')
     });
-    });
+    })
 });
