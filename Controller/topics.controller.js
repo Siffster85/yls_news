@@ -15,9 +15,3 @@ exports.getEndpoints = (req, res, next) => {
     }).catch(next)
 }
 
-exports.getArticle = (req, res, next) => {
-    selectArticle(req.params.article_id)
-    .then((article) => {
-        res.status(200).send(article)
-    }).catch(next)
-}

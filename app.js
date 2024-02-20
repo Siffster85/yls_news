@@ -1,8 +1,10 @@
 const express = require('express')
 const app = express()
-const { handlePSQLErrors, handleCustomErrors } = require('./Errors/index')
+const { handlePSQLErrors, handleCustomErrors } = require('./Errors/errorhandler')
 
-const { getTopics, getEndpoints, getArticle } = require('./Controller/topics.controller')
+const { getTopics, getEndpoints } = require('./Controller/topics.controller')
+
+const { getArticle, getAllArticles } = require('./Controller/articles.controller')
 
 //app.use(express.json()) will go here
 
@@ -12,17 +14,16 @@ app.get('/api', getEndpoints)
 
 app.get('/api/articles/:article_id', getArticle)
 
+app.get('/api/articles', getAllArticles)
 
 
 
-//catch all for 404
 app.all ('/*', (req, res) => {
     res.status(404).send({msg: 'Path not found'})
     })
 
+app.use(handlePSQLErrors)
 
-    app.use(handlePSQLErrors)
-
-    app.use(handleCustomErrors)
+app.use(handleCustomErrors)
 
     module.exports = app
