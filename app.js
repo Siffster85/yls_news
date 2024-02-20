@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const { handlePSQLErrors, handleCustomErrors } = require('./Errors/index')
+const { handlePSQLErrors, handleCustomErrors } = require('./Errors/errorhandler')
 
 const { getTopics, getEndpoints, getArticle } = require('./Controller/topics.controller')
 

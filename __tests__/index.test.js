@@ -98,3 +98,10 @@ describe('GET /api/articles/:article_id', () => {
     });
     })
 });
+
+describe('GET /api/articles', () => {
+    test('GET 200, should return with all the articles', () => {
+        
+    });
+    
+});
