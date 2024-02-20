@@ -4,7 +4,7 @@ const { handlePSQLErrors, handleCustomErrors } = require('./Errors/errorhandler'
 
 const { getTopics, getEndpoints } = require('./Controller/topics.controller')
 
-const { getArticle } = require('./Controller/articles.controller')
+const { getArticle, getAllArticles } = require('./Controller/articles.controller')
 
 //app.use(express.json()) will go here
 
@@ -13,6 +13,8 @@ app.get('/api/topics', getTopics)
 app.get('/api', getEndpoints)
 
 app.get('/api/articles/:article_id', getArticle)
+
+app.get('/api/articles', getAllArticles)
 
 
 

@@ -54,14 +54,6 @@ describe('GET /api/topics', () => {
 });
 
 describe('GET /api/articles/:article_id', () => {
-    test('GET 200, return an article object with the correct properties', () => {
-        return request(app)
-        .get('/api/articles/4')
-        .expect(200)
-        .then(({body}) => {
-            expect(Object.keys(body)).toEqual([ 'article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url' ])
-        })
-    });
     test('GET 200, return the full article with all elements', () => {
         return request(app)
         .get('/api/articles/4')
@@ -101,7 +93,37 @@ describe('GET /api/articles/:article_id', () => {
 
 describe('GET /api/articles', () => {
     test('GET 200, should return with all the articles', () => {
-        
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.length).toBe(13)
+        })
+    })
+    test('GET 200, should return all the articles and each one should have all 8 required properties', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            body.forEach((article) => {
+                expect(Object.keys(article)).toEqual(['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url', 'comment_count'])
+            })
+        })
     });
-    
+    test('GET 200, should be in descending order based on the created at column ', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeSortedBy('created_at', {descending : true})
+        })
+    });
+    test('GET 404, if an incorrect endpoint is requested, return a 404', () => {
+        return request(app)
+        .get('/api/articlessss')
+        .expect(404)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Path not found')
+    });
+    });
 });
