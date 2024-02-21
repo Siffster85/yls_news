@@ -120,19 +120,12 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
-    test('GET 200, should return all the comments from an article.', () => {        
+    test('GET 200, Should return all the comments from an article with the 6 request properties', () => {
         return request(app)
         .get('/api/articles/5/comments')
         .expect(200)
         .then(({body}) => {
             expect(body.length).toBe(2)
-        })
-    });
-    test('GET 200, Should return with the 6 request properties', () => {
-        return request(app)
-        .get('/api/articles/5/comments')
-        .expect(200)
-        .then(({body}) => {
             body.forEach((comment) => {
                 expect(Object.keys(comment)).toEqual(['comment_id', 'body', 'article_id', 'author','votes', 'created_at' ])
             })
@@ -146,12 +139,12 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body).toBeSortedBy('created_at', {descending : true})
         })
     });
-    test('GET 200, should return an invitation to comment when there are no comments', () => {
+    test('GET 200, should return an empty array when there are no comments', () => {
         return request(app)
         .get('/api/articles/7/comments')
         .expect(200)
-        .then((msg) => {
-            expect(msg.text).toBe('No comments yet. Be the first to comment!')
+        .then(({body}) => {
+            expect(body).toEqual([])
         })
     });
     test('GET 400, if the request is not a number, should return a bad request', () => {
@@ -171,3 +164,51 @@ describe('GET /api/articles/:article_id/comments', () => {
     });
     })
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('POST 201, should add a comment to an article that is then available to read when when returning the comments from the article, with comment ID, created timestamp and default votes number.', () => {
+        const newComment = {
+            username: "lurker",
+            body: "This is my test post, there are many like it but this one is mine"
+        }
+        return request(app)
+        .post('/api/articles/7/comments')
+        .expect(201)
+        .send(newComment)
+        .then(({body}) => {
+
+            expect(body).toMatchObject({
+                article_id: 7,
+                author: "lurker",
+                body: "This is my test post, there are many like it but this one is mine",
+                comment_id: expect.any(Number),
+                votes: 0,
+                created_at: expect.any(String)
+            })
+        }) 
+    });
+    test('POST 400, if a bad body is sent', () => {
+        const newComment = {}
+        return request(app)
+        .post('/api/articles/7/comments')
+        .expect(400)
+        .send(newComment)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request!")
+        }) 
+    });
+    test('POST 404, if the article does not exist, reject', () => {
+        const newComment = {
+            username: "lurker",
+            body: "This is my test post, there are many like it but this one is mine"
+        }
+        return request(app)
+        .post('/api/articles/1234567/comments')
+        .expect(404)
+        .send(newComment)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Article not found.')
+        
+    })
+    })    
+})
