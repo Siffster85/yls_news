@@ -175,7 +175,6 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(201)
         .send(newComment)
         .then(({body}) => {
-
             expect(body[1]).toMatchObject({
                 article_id: 7,
                 author: "lurker",
