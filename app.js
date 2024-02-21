@@ -4,7 +4,7 @@ const { handlePSQLErrors, handleCustomErrors } = require('./Errors/errorhandler'
 
 const { getTopics, getEndpoints } = require('./Controller/topics.controller')
 
-const { getArticle, getAllArticles } = require('./Controller/articles.controller')
+const { getArticle, getAllArticles, patchVotes } = require('./Controller/articles.controller')
 
 const { getArticleComments, addNewComment } = require('./Controller/comments.controller')
 
@@ -21,6 +21,8 @@ app.get('/api/articles', getAllArticles)
 app.get('/api/articles/:article_id/comments', getArticleComments)
 
 app.post('/api/articles/:article_id/comments', addNewComment)
+
+app.patch('/api/articles/:article_id', patchVotes)
 
 
 
