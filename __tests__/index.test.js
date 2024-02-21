@@ -70,7 +70,6 @@ describe('GET /api/articles/:article_id', () => {
                 article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
               })
         })
-        
     });
     test('GET 400, if the request is not a number, should return a bad request', () => {
         return request(app)
@@ -125,8 +124,8 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/5/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body.length).toBe(2)
-            body.forEach((comment) => {
+            expect(body[1].length).toBe(2)
+            body[1].forEach((comment) => {
                 expect(Object.keys(comment)).toEqual(['comment_id', 'body', 'article_id', 'author','votes', 'created_at' ])
             })
         })
@@ -136,7 +135,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/5/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body).toBeSortedBy('created_at', {descending : true})
+            expect(body[1]).toBeSortedBy('created_at', {descending : true})
         })
     });
     test('GET 200, should return an empty array when there are no comments', () => {
@@ -144,7 +143,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/7/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body).toEqual([])
+            expect(body[1]).toEqual([])
         })
     });
     test('GET 400, if the request is not a number, should return a bad request', () => {
@@ -177,7 +176,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         .send(newComment)
         .then(({body}) => {
 
-            expect(body).toMatchObject({
+            expect(body[1]).toMatchObject({
                 article_id: 7,
                 author: "lurker",
                 body: "This is my test post, there are many like it but this one is mine",
@@ -211,4 +210,79 @@ describe('POST /api/articles/:article_id/comments', () => {
         
     })
     })    
+    test('POST 404, if the user does not exist, reject', () => {
+        const newComment = {
+            username: "imaginaryuser",
+            body: "This is my test post, there are many like it but this one is mine"
+        }
+        return request(app)
+        .post('/api/articles/7/comments')
+        .expect(404)
+        .send(newComment)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('User not found.')
+        
+    })
+    })    
 })
+
+describe('PATCH /api/articles/:article_id', () => {
+    test('PATCH 200, should update an article vote count and return the article', () => {
+        const vote = {inc_votes: 1}
+        return request(app)
+        .patch('/api/articles/4')
+        .expect(200)
+        .send(vote)
+        .then(({body}) => {
+            expect(body[1]).toEqual({
+                article_id: 4,
+                title: 'Student SUES Mitch!',
+                topic: 'mitch',
+                author: 'rogersop',
+                body: 'We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages',
+                created_at: '2020-05-06T01:14:00.000Z',
+                votes: 1,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+              })
+        })
+    });
+    test('PATCH 200, should update an article vote count and return the article, checking if a negative is used it works as expected', () => {
+        const vote = {inc_votes: -1}
+        return request(app)
+        .patch('/api/articles/4')
+        .expect(200)
+        .send(vote)
+        .then(({body}) => {
+            expect(body[1]).toEqual({
+                article_id: 4,
+                title: 'Student SUES Mitch!',
+                topic: 'mitch',
+                author: 'rogersop',
+                body: 'We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages',
+                created_at: '2020-05-06T01:14:00.000Z',
+                votes: -1,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+              })
+        })
+    });
+    test('GET 400, if the request is not a number, should return a bad request', () => {
+        const vote = {inc_votes: 1}
+        return request(app)
+        .patch('/api/articles/for')
+        .expect(400)
+        .send(vote)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Bad Request!')
+        })
+    });
+    test('GET 404, if the article ID number does not exist', () => {
+        const vote = {inc_votes: 1}
+        return request(app)
+        .patch('/api/articles/1234567')
+        .expect(404)
+        .send(vote)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Article not found.')
+    });
+    })
+});

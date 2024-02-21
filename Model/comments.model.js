@@ -17,8 +17,7 @@ exports.insertComment = (newComment, articleID) => {
         return Promise.reject({ status: 400, msg: "Bad Request!"})
     }
     const { username, body } = newComment
-
-    
+ 
     return db.query(
         `INSERT INTO comments
         (body, article_id, author)
