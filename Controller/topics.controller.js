@@ -1,12 +1,13 @@
-const { selectTopics, readEndpoints, selectArticle } = require('../Model/topics.model')
+const { selectAllTopics, readEndpoints, selectArticle } = require('../Model/topics.model')
 
 
 exports.getTopics = (req, res, next) => {
-    selectTopics()
+    selectAllTopics()
     .then((topics) => {
         res.status(200).send({topics})
     }).catch(next)
 }
+
 
 exports.getEndpoints = (req, res, next) => {
     readEndpoints()

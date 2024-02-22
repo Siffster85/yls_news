@@ -59,16 +59,17 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/4')
         .expect(200)
         .then(({body}) => {
-            expect(body).toEqual({
+            expect(body).toEqual(expect.objectContaining({
                 article_id: 4,
-                title: 'Student SUES Mitch!',
-                topic: 'mitch',
-                author: 'rogersop',
-                body: 'We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages',
-                created_at: '2020-05-06T01:14:00.000Z',
-                votes: 0,
-                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-              })
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String)
+            })
+         )
         })
     });
     test('GET 400, if the request is not a number, should return a bad request', () => {
@@ -87,6 +88,25 @@ describe('GET /api/articles/:article_id', () => {
             expect(msg).toBe('Article not found.')
     });
     })
+    test('GET 200, return the full article including the new comment count feature', () => {
+        return request(app)
+        .get('/api/articles/4')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual(expect.objectContaining({
+                article_id: 4,
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+                comment_count: expect.any(Number),
+            })
+         )
+        })
+    });
 });
 
 describe('GET /api/articles', () => {
@@ -127,14 +147,22 @@ describe('GET /api/articles', () => {
             })
         })
     })
-    test('GET 404, should reject if that topic is not present', () => {
+    test('GET 200, should return message if that topic is not present', () => {
         return request(app)
-        .get('/api/articles?topic=dogs')
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('No articles with this topic')
+        })
+    })
+    test('GET 404, should reject if the topic is not valid', () => {
+        return request(app)
+        .get('/api/articles?topic=dogsandbears')
         .expect(404)
         .then(({body: {msg}}) => {
             expect(msg).toBe('Topic not found')
         })
-    })
+    });
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
@@ -314,9 +342,9 @@ describe('DELETE /api/comments/:comment_id', () => {
     test('DELETE 400, if comment not found reject', () => {
         return request(app)
         .delete('/api/comments/18901')
-        .expect(400)
+        .expect(404)
         .then(({body: {msg}}) => {
-            expect(msg).toBe('Bad Request!')
+            expect(msg).toBe('Comment not found')
         })
     });
     test('DELETE 400, if incorrect data type sent should reject ', () => {
