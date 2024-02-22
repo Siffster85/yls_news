@@ -335,7 +335,6 @@ describe('GET /api/users', () => {
         .get('/api/users')
         .expect(200)
         .then(({body}) =>{
-            console.log(body);
             expect(body.length).toBe(4)
             body.forEach((user) =>{
             expect(Object.keys(user)).toEqual([ 'username', 'name', 'avatar_url' ])
