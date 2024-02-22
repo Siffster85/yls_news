@@ -116,6 +116,25 @@ describe('GET /api/articles', () => {
             expect(body).toBeSortedBy('created_at', {descending : true})
         })
     });
+    test('GET 200, should return with all the articles with a specific topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.length).toEqual(1)
+            body.forEach((article) => {
+            expect(article.topic).toBe('cats')
+            })
+        })
+    })
+    test('GET 404, should reject if that topic is not present', () => {
+        return request(app)
+        .get('/api/articles?topic=dogs')
+        .expect(404)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Topic not found')
+        })
+    })
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
@@ -316,6 +335,7 @@ describe('GET /api/users', () => {
         .get('/api/users')
         .expect(200)
         .then(({body}) =>{
+            console.log(body);
             expect(body.length).toBe(4)
             body.forEach((user) =>{
             expect(Object.keys(user)).toEqual([ 'username', 'name', 'avatar_url' ])
