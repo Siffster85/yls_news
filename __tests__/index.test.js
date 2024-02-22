@@ -284,4 +284,28 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(msg).toBe('Article not found.')
     });
     })
-});
+})
+
+describe('DELETE /api/comments/:comment_id', () => {
+    test('DELETE 204 Should return 204 and no content', () => {
+        return request(app)
+        .delete('/api/comments/18')
+        .expect(204)
+    });
+    test('DELETE 400, if comment not found reject', () => {
+        return request(app)
+        .delete('/api/comments/18901')
+        .expect(400)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Bad Request!')
+        })
+    });
+    test('DELETE 400, if incorrect data type sent should reject ', () => {
+        return request(app)
+        .delete('/api/comments/allofmine')
+        .expect(400)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Bad Request!')
+        })
+    });
+})
