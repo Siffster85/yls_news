@@ -6,7 +6,7 @@ const { getTopics, getEndpoints } = require('./Controller/topics.controller')
 
 const { getArticle, getAllArticles, patchVotes } = require('./Controller/articles.controller')
 
-const { getArticleComments, addNewComment } = require('./Controller/comments.controller')
+const { getArticleComments, addNewComment, deleteComment } = require('./Controller/comments.controller')
 
 app.use(express.json())
 
@@ -24,7 +24,7 @@ app.post('/api/articles/:article_id/comments', addNewComment)
 
 app.patch('/api/articles/:article_id', patchVotes)
 
-
+app.delete('/api/comments/:comment_id', deleteComment)
 
 app.all ('/*', (req, res) => {
     res.status(404).send({msg: 'Path not found'})

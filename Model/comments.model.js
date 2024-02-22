@@ -29,3 +29,25 @@ exports.insertComment = (newComment, articleID) => {
         return rows[0]
     })
 }
+
+exports.removeComment = (commentID) => {
+    return db.query(
+        `SELECT * FROM comments
+        WHERE comment_id = $1`, [commentID]
+    )
+    .then(({rows}) => {
+        if(rows.length === 0){
+            return Promise.reject({ status: 400, msg: 'Bad Request!'})
+        } else {
+            return db.query(
+                `DELETE FROM comments
+                WHERE comment_id = $1 RETURNING *`,
+                [commentID]
+            )
+            .then(({rows}) => {
+                if(rows[0].comment_id === commentID){
+                return rows}
+            })
+        }
+    })
+}
