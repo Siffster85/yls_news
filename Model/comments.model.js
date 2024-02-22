@@ -37,7 +37,7 @@ exports.removeComment = (commentID) => {
     )
     .then(({rows}) => {
         if(rows.length === 0){
-            return Promise.reject({ status: 400, msg: 'Bad Request!'})
+            return Promise.reject({ status: 404, msg: 'Comment not found'})
         } else {
             return db.query(
                 `DELETE FROM comments
