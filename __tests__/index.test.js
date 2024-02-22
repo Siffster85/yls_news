@@ -309,3 +309,17 @@ describe('DELETE /api/comments/:comment_id', () => {
         })
     });
 })
+
+describe('GET /api/users', () => {
+    test('GET 200, should return a table of 4 users and each should have 3 keys, username, name and avatar_url', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) =>{
+            expect(body.length).toBe(4)
+            body.forEach((user) =>{
+            expect(Object.keys(user)).toEqual([ 'username', 'name', 'avatar_url' ])
+            })
+    })
+    });
+});
