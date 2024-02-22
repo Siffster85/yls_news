@@ -106,7 +106,7 @@
     "description": "Provides a table of all users",
     "queries": [],
     "exampleResponse": {
-      [
+      "users": [
         {
           "username": "butter_bridge",
           "name": "jonny",
