@@ -47,8 +47,11 @@ describe('GET /api/topics', () => {
         .then(({ body: {topics}}) =>{
             expect(topics.length).toBe(3)
             topics.forEach((topic) =>{
-            expect(Object.keys(topic)).toEqual([ 'slug', 'description' ])
-            })
+            expect(topic).toEqual(expect.objectContaining({
+                slug: expect.any(String),
+                description: expect.any(String)
+            }))
+        })
     })
     });
 });
@@ -102,7 +105,7 @@ describe('GET /api/articles/:article_id', () => {
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 article_img_url: expect.any(String),
-                comment_count: expect.any(Number),
+                comment_count: 0,
             })
          )
         })
@@ -124,7 +127,16 @@ describe('GET /api/articles', () => {
         .expect(200)
         .then(({body}) => {
             body.forEach((article) => {
-                expect(Object.keys(article)).toEqual(['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url', 'comment_count'])
+                expect(article).toEqual(expect.objectContaining({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number),
+                }))
             })
         })
     });
@@ -173,7 +185,14 @@ describe('GET /api/articles/:article_id/comments', () => {
         .then(({body}) => {
             expect(body[1].length).toBe(2)
             body[1].forEach((comment) => {
-                expect(Object.keys(comment)).toEqual(['comment_id', 'body', 'article_id', 'author','votes', 'created_at' ])
+                expect(comment).toEqual(expect.objectContaining({
+                    comment_id: expect.any(Number),
+                    body: expect.any(String),
+                    article_id: expect.any(Number),
+                    author: expect.any(String),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String)
+                }))                
             })
         })
     });
@@ -365,8 +384,12 @@ describe('GET /api/users', () => {
         .then(({body}) =>{
             expect(body.length).toBe(4)
             body.forEach((user) =>{
-            expect(Object.keys(user)).toEqual([ 'username', 'name', 'avatar_url' ])
-            })
+            expect(user).toEqual(expect.objectContaining({
+                username: expect.any(String), 
+                name: expect.any(String),
+                avatar_url: expect.any(String)
+            }))
+        })
     })
     });
 });
