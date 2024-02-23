@@ -1,4 +1,4 @@
-const { selectArticleComments, insertComment, removeComment } = require('../Model/comments.model')
+const { selectArticleComments, insertComment, removeComment, updateCommentVotes } = require('../Model/comments.model')
 
 const { selectArticle } = require('../Model/articles.model')
 
@@ -31,5 +31,14 @@ exports.deleteComment = (req, res, next) => {
     removeComment(commentID)
     .then(() => {
         res.status(204).send()
+    }).catch(next)
+}
+
+exports.patchComment = (req, res, next) => {
+    const votes = req.body
+    const commentID = req.params.comment_id
+    updateCommentVotes(votes, commentID)
+    .then((comment) => {
+        res.status(200).send(comment)
     }).catch(next)
 }

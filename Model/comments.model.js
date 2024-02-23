@@ -51,3 +51,14 @@ exports.removeComment = (commentID) => {
         }
     })
 }
+
+exports.updateCommentVotes = (votes, commentID) => {
+    const voteInc = votes.inc_votes
+    return db.query(
+        `UPDATE comments SET votes = (votes+$1)
+        WHERE comment_id = $2 RETURNING *`,[voteInc, commentID]
+    )
+    .then(({rows}) => {
+        return rows[0]
+    })
+}

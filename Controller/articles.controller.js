@@ -10,8 +10,8 @@ exports.getArticle = (req, res, next) => {
 }
 
 exports.getAllArticles = (req, res, next) => {
-    const { topic } = req.query
-    const promises = [selectTopic(topic), selectAllArticles(topic)]
+    const { topic, sort_by, order } = req.query
+    const promises = [selectTopic(topic), selectAllArticles(topic, sort_by, order)]
     Promise.all(promises)
     .then((articles) => {
         res.status(200).send(articles[1])
