@@ -175,6 +175,30 @@ describe('GET /api/articles', () => {
             expect(msg).toBe('Topic not found')
         })
     });
+    test('GET 200, should return all the articles sorted by ANY VALID column in either ascending or descending (defaults to descending)', () => {
+        return request(app)
+        .get('/api/articles?sort_by=article_id&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeSortedBy('article_id', {descending : false})
+        })
+    });
+    test('GET:400, should return error due to bad request if order query incorrect', () => {
+        return request(app)
+        .get('/api/articles?sort_by=article_id&order=decimate')
+        .expect(400)
+        .then(({ body: {msg} }) => {
+        expect(msg).toBe('Bad Request!')
+        })
+    })
+    test('GET:400, should return error due to bad request if sort_by query not valid', () => {
+        return request(app)
+        .get('/api/articles?sort_by=most_comments&order=desc')
+        .expect(400)
+        .then(({ body: {msg} }) => {
+        expect(msg).toBe('Bad Request!')
+        })
+    });
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
@@ -392,4 +416,67 @@ describe('GET /api/users', () => {
         })
     })
     });
+});
+
+describe('GET /api/users/:username', () => {
+    test('GET 200, should return a table of a specific user with 3 keys, username, name and avatar_url', () => {
+        return request(app)
+        .get('/api/users/lurker')
+        .expect(200)
+        .then(({body}) =>{
+            expect(body).toEqual(expect.objectContaining({
+                username: 'lurker', 
+                name: 'do_nothing',
+                avatar_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
+            }))
+        })
+    }) 
+    test('GET 404, should return error if user not found', () => {
+        return request(app)
+        .get('/api/users/dave')
+        .expect(404)
+        .then(({body: {msg}}) => {
+        expect(msg).toBe('User not found.')
+        })
+    });
+});
+
+describe('PATCH /api/comments/:comment_id', () => {
+    test('PATCH 200, should update an comment vote count and return the comment', () => {
+        const vote = {inc_votes: 1}
+        return request(app)
+        .patch('/api/comments/5')
+        .expect(200)
+        .send(vote)
+        .then(({body}) => {
+            expect(body).toEqual({
+                comment_id: 5,
+                body: 'I hate streaming noses',
+                article_id: 1,
+                author: 'icellusedkars',
+                votes: 1,
+                created_at: '2020-11-03T21:00:00.000Z'
+              })
+        })
+    });
+    test('GET 400, if the request is not a number, should return a bad request', () => {
+        const vote = {inc_votes: 1}
+        return request(app)
+        .patch('/api/comments/for')
+        .expect(400)
+        .send(vote)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Bad Request!')
+        })
+    });
+    test('GET 404, if the comment ID number does not exist', () => {
+        const vote = {inc_votes: 1}
+        return request(app)
+        .patch('/api/comment/1234567')
+        .expect(404)
+        .send(vote)
+        .then(({body: {msg}}) => {
+            expect(msg).toBe('Path not found')
+    });
+    })
 });
