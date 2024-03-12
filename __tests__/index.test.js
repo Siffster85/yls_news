@@ -207,8 +207,8 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/5/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body[1].length).toBe(2)
-            body[1].forEach((comment) => {
+            expect(body.length).toBe(2)
+            body.forEach((comment) => {
                 expect(comment).toEqual(expect.objectContaining({
                     comment_id: expect.any(Number),
                     body: expect.any(String),
@@ -225,7 +225,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/5/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body[1]).toBeSortedBy('created_at', {descending : true})
+            expect(body).toBeSortedBy('created_at', {descending : true})
         })
     });
     test('GET 200, should return an empty array when there are no comments', () => {
@@ -233,7 +233,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/7/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body[1]).toEqual([])
+            expect(body).toEqual([])
         })
     });
     test('GET 400, if the request is not a number, should return a bad request', () => {
@@ -323,7 +323,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(200)
         .send(vote)
         .then(({body}) => {
-            expect(body[1]).toEqual({
+            expect(body).toEqual({
                 article_id: 4,
                 title: 'Student SUES Mitch!',
                 topic: 'mitch',
@@ -342,7 +342,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(200)
         .send(vote)
         .then(({body}) => {
-            expect(body[1]).toEqual({
+            expect(body).toEqual({
                 article_id: 4,
                 title: 'Student SUES Mitch!',
                 topic: 'mitch',

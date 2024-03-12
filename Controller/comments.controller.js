@@ -9,9 +9,9 @@ exports.getArticleComments = (req, res, next) => {
     Promise.all(promises)
     .then((comments) => {
         if(Array.isArray(comments[1]) && !comments[1].length){
-           res.status(200).send(comments)
+           res.status(200).send(comments[1])
         }
-        res.status(200).send(comments)
+        res.status(200).send(comments[1])
     }).catch(next)
 }
 

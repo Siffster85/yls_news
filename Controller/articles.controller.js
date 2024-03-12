@@ -26,6 +26,6 @@ exports.patchVotes = (req, res, next) => {
     
     Promise.all(promises)
     .then((article) => {
-        res.status(200).send(article)
+        res.status(200).send(article[1])
     }).catch(next)
 }
