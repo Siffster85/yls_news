@@ -22,7 +22,7 @@ exports.addNewComment = (req, res, next) => {
     const promises = [selectArticle(req.params.article_id), insertComment(newComment, articleID)]
     Promise.all(promises)
     .then((comment) => {
-        res.status(201).send(comment)
+        res.status(201).send(comment[1])
     }).catch(next)
     }
 
